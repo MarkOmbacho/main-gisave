@@ -34,10 +34,10 @@ const Index = () => {
             Empowering women through STEM Education
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button className="rounded-xl px-8 py-6 text-lg bg-primary hover:bg-primary/90">
-              Learn more
+            <Button className="rounded-xl px-8 py-6 text-lg bg-primary hover:bg-primary/90" onClick={() => window.location.href = '/auth'}>
+              Get Started
             </Button>
-            <Button variant="outline" className="rounded-xl px-8 py-6 text-lg border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+            <Button variant="outline" className="rounded-xl px-8 py-6 text-lg border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => window.location.href = '/programs'}>
               Our Programs
             </Button>
           </div>

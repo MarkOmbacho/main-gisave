@@ -11,6 +11,8 @@ const Navigation = () => {
     { label: "Home", path: "/" },
     { label: "Who we are", path: "/about" },
     { label: "Our programs", path: "/programs" },
+    { label: "Mentors", path: "/mentors" },
+    { label: "Blog", path: "/blog" },
     { label: "Contact", path: "/contact" },
   ];
 
@@ -25,7 +27,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -37,6 +39,9 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
+            <Link to="/auth">
+              <Button size="sm" className="rounded-xl">Login</Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
