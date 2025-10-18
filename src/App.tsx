@@ -13,6 +13,7 @@ import Mentors from "./pages/Mentors";
 import Blog from "./pages/Blog";
 import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/mentors" element={<Mentors />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/premium" element={<Premium />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

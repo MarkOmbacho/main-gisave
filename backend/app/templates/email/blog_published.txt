@@ -1,0 +1,9 @@
+Subject: Your blog post is live
+
+Hi {{ name }},
+
+Good news — your blog post "{{ title }}" is now live on Girls I Save as of {{ published_at }}.
+
+Share the link with your network and thank you for contributing!
+
+— The Girls I Save team

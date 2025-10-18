@@ -45,3 +45,15 @@ If you prefer running the backend + redis + worker locally via Docker Compose:
 2. The API will be available at http://localhost:5000 and a Celery worker will be available to process email tasks.
 
 Notes: This compose file uses the repo root as the application context and a sqlite file for simplicity. For a MySQL development environment replace the `DATABASE_URL` with a MySQL container and update `requirements.txt` accordingly.
+
+Admin UI
+--------
+
+The Flask-Admin powered admin UI is optional and disabled by default. To enable it set the environment variable `ENABLE_ADMIN=1` or set `ENABLE_ADMIN=True` in app config. Example:
+
+```powershell
+$env:ENABLE_ADMIN = '1'
+flask run
+```
+
+Compatibility note: Flask-Admin has historically required certain SQLAlchemy internals that changed between SQLAlchemy 1.4 and 2.x. If the admin import fails the app will still start but the admin UI will be skipped. For production usage where the admin UI is required, pin compatible dependency versions in `backend/requirements.txt` (for example a working combination is `SQLAlchemy==1.4.x` with `Flask-Admin==1.6.x`), test locally, then deploy with the same pinned versions.

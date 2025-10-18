@@ -1,0 +1,12 @@
+Subject: We received your mentor application
+
+Hi {{ name }},
+
+Thanks for applying to be a mentor on Girls I Save. We received your application titled "{{ title }}" on {{ submitted_at }}.
+
+Our team will review your documents and get back to you within a few days.
+
+If you have any questions, reply to this email.
+
+Thanks,
+The Girls I Save team

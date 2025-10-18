@@ -1,0 +1,13 @@
+Subject: Update on your blog submission
+
+Hi {{ name }},
+
+Your blog post "{{ title }}" has been {{ decision }} by our moderation team.
+
+{% if note %}
+Note from moderator:
+"{{ note }}"
+{% endif %}
+
+Thanks for contributing,
+The Girls I Save team

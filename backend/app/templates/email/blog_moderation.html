@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <p>Hi {{ name }},</p>
+    <p>Your blog post "<strong>{{ title }}</strong>" has been <strong>{{ decision }}</strong> by our moderation team.</p>
+    {% if note %}
+    <p>Note from moderator:</p>
+    <blockquote>{{ note }}</blockquote>
+    {% endif %}
+    <p>Thanks for contributing,<br/>The Girls I Save team</p>
+  </body>
+</html>

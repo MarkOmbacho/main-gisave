@@ -1,0 +1,15 @@
+Subject: Update on your mentor application
+
+Hi {{ name }},
+
+Your mentor application ("{{ title }}") has been {{ decision }}.
+
+{% if note %}
+Review note from admin:
+"{{ note }}"
+{% endif %}
+
+If you have questions, contact support.
+
+Thanks,
+The Girls I Save team

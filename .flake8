@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 140
+extend-ignore = E302
+
+# NOTE: This relaxes some stylistic rules temporarily so we can proceed with
+# feature work. Remove or tighten these settings before final production.

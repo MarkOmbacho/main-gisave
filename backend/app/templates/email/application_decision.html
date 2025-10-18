@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <p>Hi {{ name }},</p>
+    <p>Your mentor application ("{{ title }}") has been <strong>{{ decision }}</strong>.</p>
+    {% if note %}
+    <p>Review note from admin:</p>
+    <blockquote>{{ note }}</blockquote>
+    {% endif %}
+    <p>Thanks,<br/>The Girls I Save team</p>
+  </body>
+</html>
