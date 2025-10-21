@@ -1,10 +1,10 @@
-import gheida from "@/assets/board-members/gheida.jpg";
-import mark from "@/assets/board-members/mark.jpg";
-import yusra from "@/assets/board-members/yusra.jpg";
-import asma from "@/assets/board-members/asma.jpg";
-import jumaah from "@/assets/board-members/jumaah.jpg";
-import mulki from "@/assets/board-members/mulki.jpg";
-import abdura from "@/assets/board-members/abdura.jpg";
+import gheida from "@/assets/Board-members/gheida.jpg";
+import mark from "@/assets/Board-members/mark.jpg";
+import yusra from "@/assets/Board-members/yusra.jpg";
+import asma from "@/assets/Board-members/asma.jpg";
+import jumaah from "@/assets/Board-members/jumaah.jpg";
+import mulki from "@/assets/Board-members/mulki.jpg";
+import abdura from "@/assets/Board-members/abdura.jpg";
 
 export interface BoardMember {
   id: string;
