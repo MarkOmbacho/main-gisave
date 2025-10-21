@@ -1,14 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 interface ProgramCardProps {
+  id: string;
   title: string;
   description: string;
   category: string;
 }
 
-const ProgramCard = ({ title, description, category }: ProgramCardProps) => {
+const ProgramCard = ({ id, title, description, category }: ProgramCardProps) => {
   return (
     <Card className="bg-primary text-primary-foreground shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 rounded-2xl border-0">
       <CardHeader>
@@ -23,9 +25,11 @@ const ProgramCard = ({ title, description, category }: ProgramCardProps) => {
         </CardDescription>
       </CardContent>
       <CardFooter>
-        <Button variant="secondary" className="w-full rounded-xl">
-          Learn More
-        </Button>
+        <Link to={`/programs/${id}`} className="w-full">
+          <Button variant="secondary" className="w-full rounded-xl">
+            Learn More
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

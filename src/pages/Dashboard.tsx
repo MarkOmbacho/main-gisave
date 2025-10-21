@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, becomeMentor } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [roles, setRoles] = useState<string[]>([]);
@@ -40,6 +40,8 @@ const Dashboard = () => {
   const [activities, setActivities] = useState([]);
   const [events, setEvents] = useState([]);
   const [progress, setProgress] = useState([]);
+  const [isMentor, setIsMentor] = useState(false);
+  const [becomingMentor, setBecomingMentor] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -55,6 +57,29 @@ const Dashboard = () => {
         .eq("id", user.id)
         .single()
         .then(({ data }) => setProfile(data));
+
+      // fetch backend profile to detect completeness (uses backend_user_id if present)
+      const backendId = localStorage.getItem('backend_user_id');
+      if (backendId) {
+        fetch(`/users/${backendId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            // if missing name or bio or avatar, show a CTA (we stash it in profile)
+            setProfile((p: any) => ({ ...p, backend: data }));
+          })
+          .catch(() => {});
+        
+        // Check if user is already a mentor
+        fetch(`/mentors/list`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('backend_token')}` }
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            const userIsMentor = data.some((m: any) => m.mentor_id === Number(backendId));
+            setIsMentor(userIsMentor);
+          })
+          .catch(() => {});
+      }
 
       supabase
         .from("user_roles")
@@ -100,6 +125,21 @@ const Dashboard = () => {
         .then((data) => setProgress(data || []));
     }
   }, [user]);
+
+  const handleBecomeMentor = async () => {
+    setBecomingMentor(true);
+    try {
+      const result = await becomeMentor('General Mentoring', 'available');
+      if (result) {
+        setIsMentor(true);
+        // Show success notification
+      }
+    } catch (e) {
+      console.error('Failed to become mentor:', e);
+    } finally {
+      setBecomingMentor(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -181,9 +221,12 @@ const Dashboard = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
-                    Welcome back, {profile?.full_name?.split(" ")[0] || "User"}! 👋
-                  </h1>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Welcome back, {profile?.full_name?.split(" ")[0] || "User"}! 👋</h1>
+                    {profile?.backend && (!profile?.backend?.name || !profile?.backend?.bio || !profile?.backend?.profile_photo_url) && (
+                      <Button onClick={() => navigate('/profile')} className="rounded-xl bg-primary text-primary-foreground">Complete your profile</Button>
+                    )}
+                  </div>
                   <p className="text-muted-foreground text-sm lg:text-base">
                     Ready to continue your learning journey?
                   </p>
@@ -426,6 +469,32 @@ const Dashboard = () => {
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Become a Mentor */}
+            {!isMentor && (
+              <Card className="border-none shadow-card bg-gradient-to-br from-accent/10 via-background to-primary/10">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5 text-accent" />
+                    Become a Mentor
+                  </CardTitle>
+                  <CardDescription>Share your expertise and help others grow</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Ready to guide the next generation? Join our mentor community and make an impact.
+                  </p>
+                  <Button 
+                    className="w-full bg-accent hover:bg-accent/90 text-white" 
+                    onClick={handleBecomeMentor}
+                    disabled={becomingMentor}
+                  >
+                    {becomingMentor ? "Setting up..." : "Become a Mentor"}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>

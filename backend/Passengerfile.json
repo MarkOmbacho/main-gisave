@@ -1,0 +1,5 @@
+{
+  "startup_file": "passenger_wsgi.py",
+  "environment": "production",
+  "python": "3"
+}

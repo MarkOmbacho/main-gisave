@@ -3,54 +3,14 @@ import Footer from "@/components/Footer";
 import ProgramCard from "@/components/ProgramCard";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { programs } from "@/data/programs";
 
 const Programs = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", "Foundation", "Mentorship", "Advanced", "Workshops"];
+  const categories = ["All", "Technology", "Mentorship", "Business & Technology", "Foundation"];
 
-  const allPrograms = [
-    {
-      title: "STEM Foundations",
-      description: "Introduction to Science, Technology, Engineering, and Mathematics for beginners. Build your foundational knowledge and discover your passion.",
-      category: "Foundation",
-    },
-    {
-      title: "Coding Bootcamp",
-      description: "Learn programming fundamentals and web development through hands-on projects and real-world applications.",
-      category: "Foundation",
-    },
-    {
-      title: "One-on-One Mentorship",
-      description: "Get paired with experienced professionals in your field of interest for personalized guidance and career advice.",
-      category: "Mentorship",
-    },
-    {
-      title: "Group Mentoring Sessions",
-      description: "Join small groups led by industry experts to discuss challenges, share experiences, and grow together.",
-      category: "Mentorship",
-    },
-    {
-      title: "Advanced Robotics",
-      description: "Dive deep into robotics, automation, and AI. Design, build, and program your own robotic systems.",
-      category: "Advanced",
-    },
-    {
-      title: "Data Science & Analytics",
-      description: "Master data analysis, visualization, and machine learning techniques used by leading tech companies.",
-      category: "Advanced",
-    },
-    {
-      title: "Weekend STEM Labs",
-      description: "Participate in exciting hands-on experiments and projects every weekend. Learn by doing!",
-      category: "Workshops",
-    },
-    {
-      title: "Innovation Challenge",
-      description: "Compete in our annual innovation challenge. Solve real-world problems and showcase your creativity.",
-      category: "Workshops",
-    },
-  ];
+  const allPrograms = programs;
 
   const filteredPrograms = selectedCategory === "All" 
     ? allPrograms 
@@ -91,7 +51,12 @@ const Programs = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPrograms.map((program, index) => (
             <div key={index} className="animate-scale-in" style={{ animationDelay: `${index * 0.05}s` }}>
-              <ProgramCard {...program} />
+              <ProgramCard 
+                id={program.id}
+                title={program.title}
+                description={program.shortDescription}
+                category={program.category}
+              />
             </div>
           ))}
         </div>

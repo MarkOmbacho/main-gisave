@@ -3,22 +3,12 @@ import Footer from "@/components/Footer";
 import ProgramCard from "@/components/ProgramCard";
 import ImpactStat from "@/components/ImpactStat";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-image.jpg";
 import missionImage from "@/assets/mission-image.jpg";
+import { getFeaturedPrograms } from "@/data/programs";
+import PartnersMarquee from "@/components/PartnersMarquee";
 
 const Index = () => {
-  const programs = [
-    {
-      title: "Program A",
-      description: "Comprehensive STEM education program focusing on building foundational skills in science and technology.",
-      category: "Foundation",
-    },
-    {
-      title: "Program B",
-      description: "Advanced mentorship program connecting young women with industry professionals in STEM fields.",
-      category: "Mentorship",
-    },
-  ];
+  const programs = getFeaturedPrograms();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -31,7 +21,7 @@ const Index = () => {
             BUILD, LEAD AND OWN THE FUTURE
           </h1>
           <p className="text-xl md:text-2xl text-foreground/80 mb-8">
-            Empowering women through STEM Education
+            Empowering youth through STEM Education
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button className="rounded-xl px-8 py-6 text-lg bg-primary hover:bg-primary/90" onClick={() => window.location.href = '/auth'}>
@@ -42,11 +32,16 @@ const Index = () => {
             </Button>
           </div>
           <div className="rounded-3xl overflow-hidden shadow-card-hover">
-            <img
-              src={heroImage}
-              alt="Young women learning STEM"
-              className="w-full h-auto object-cover"
-            />
+            <div className="relative w-full pb-[56.25%]">
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/ifwVNp8uoiQ?rel=0&showinfo=0"
+                title="Girls I Save - Hero Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -66,7 +61,7 @@ const Index = () => {
               Our Mission
             </h2>
             <p className="text-foreground/80 text-lg leading-relaxed mb-6">
-              We create opportunities for girls to learn, lead, and thrive by connecting them with inspiring role models, accessible learning resources, and a supportive community.
+              We create opportunities for youth to learn, lead, and thrive by connecting them with inspiring role models, accessible learning resources, and a supportive community.
             </p>
             <Button className="rounded-xl px-8 py-6 bg-primary hover:bg-primary/90">
               Get To Know Us
@@ -82,7 +77,7 @@ const Index = () => {
             Our Impact
           </h2>
           <p className="text-foreground/80 text-lg max-w-3xl mx-auto">
-            In partnership with like-minded organizations, we bring STEM education directly to school grounds and community centers through hands-on activities that spark early interest and confidence. By meeting girls where they are, we show them that STEM isn't just possible—it's for them.
+            In partnership with like-minded organizations, we bring STEM education directly to school grounds and community centers through hands-on activities that spark early interest and confidence. By meeting the youth where they are, we show them that STEM isn't just possible—it's for them.
           </p>
         </div>
         <p className="text-center text-foreground/80 mb-8 max-w-2xl mx-auto">
@@ -108,7 +103,12 @@ const Index = () => {
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {programs.map((program, index) => (
             <div key={index} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-              <ProgramCard {...program} />
+              <ProgramCard 
+                id={program.id}
+                title={program.title}
+                description={program.shortDescription}
+                category={program.category}
+              />
             </div>
           ))}
         </div>
@@ -123,12 +123,11 @@ const Index = () => {
           <p className="text-foreground/80 text-lg max-w-3xl mx-auto mb-8">
             Literacy is one of the most challenging issues in Africa today, and requires sharing and exchanging knowledge, new ways of thinking, acting and partnering for change.
           </p>
-          <div className="flex flex-wrap justify-center gap-8 mb-8">
-            {[1, 2, 3, 4, 5].map((partner) => (
-              <div key={partner} className="text-foreground/60">
-                Partner {partner}
-              </div>
-            ))}
+          <div className="mb-8">
+            {/* Partners logos marquee */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <PartnersMarquee />
           </div>
           <Button variant="outline" className="rounded-xl px-8 py-4 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
             Become a Partner

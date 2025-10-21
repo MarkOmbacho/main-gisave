@@ -14,6 +14,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
+  const { syncBackendUser, obtainBackendToken } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -31,7 +32,25 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } else {
-      await signUp(email, password, fullName);
+      const { error } = await signUp(email, password, fullName);
+      if (!error) {
+        // create backend user and obtain backend token
+        try {
+          console.log('Auth: syncing backend user for', email);
+          await syncBackendUser(email, fullName);
+          console.log('Auth: obtaining backend token');
+          const token = await obtainBackendToken(email, fullName);
+          if (!token) {
+            console.error('Auth: obtainBackendToken returned null, but continuing');
+            // don't fail; user can complete profile even without token initially
+          }
+        } catch (e) {
+          console.error('Auth: backend sync exception', e);
+          // don't fail the signup; user can still proceed
+        }
+        // redirect to profile onboarding
+        navigate('/profile?onboard=true');
+      }
     }
 
     setLoading(false);

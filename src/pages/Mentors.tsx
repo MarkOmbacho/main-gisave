@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,25 +10,27 @@ import { Input } from "@/components/ui/input";
 const Mentors = () => {
   const [mentors, setMentors] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    fetchMentors();
-  }, []);
+    if (user) {
+      fetchMentors();
+    }
+  }, [user]);
 
   const fetchMentors = async () => {
-    const { data } = await supabase
-      .from("mentors")
-      .select(`
-        *,
-        profiles (
-          full_name,
-          avatar_url,
-          bio
-        )
-      `)
-      .eq("availability", true);
-
-    setMentors(data || []);
+    try {
+      const token = localStorage.getItem('backend_token');
+      const headers: any = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch('/mentors/list', { headers });
+      if (!res.ok) throw new Error('failed to load mentors');
+      const data = await res.json();
+      setMentors(data || []);
+    } catch (e) {
+      console.error(e);
+      setMentors([]);
+    }
   };
 
   const filteredMentors = mentors.filter((mentor) =>
@@ -45,7 +47,7 @@ const Mentors = () => {
             Our Mentors
           </h1>
           <p className="text-foreground/80 text-lg max-w-2xl mx-auto mb-8">
-            Connect with experienced professionals who are passionate about empowering the next generation of women in STEM
+            Connect with experienced professionals who are passionate about empowering the next generation of young leaders
           </p>
           <Input
             type="search"
@@ -56,23 +58,28 @@ const Mentors = () => {
           />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {!user && !loading ? (
+          <div className="text-center py-12">
+            <p className="text-foreground/70">Login to access mentors</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMentors.map((mentor) => (
             <Card key={mentor.id} className="shadow-card hover:shadow-card-hover transition-all">
               <CardHeader>
                 <div className="flex items-center gap-4 mb-2">
                   <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
-                    {mentor.profiles?.full_name?.[0] || "M"}
+                    {mentor.name?.[0] || "M"}
                   </div>
                   <div>
-                    <CardTitle className="text-xl">{mentor.profiles?.full_name}</CardTitle>
-                    <Badge className="mt-1">{mentor.specialization}</Badge>
+                    <CardTitle className="text-xl">{mentor.name}</CardTitle>
+                    <Badge className="mt-1">{mentor.expertise_areas?.[0] || "Mentor"}</Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground/80 mb-4">
-                  {mentor.profiles?.bio || "Experienced STEM professional"}
+                  {mentor.bio || "Experienced STEM professional"}
                 </p>
                 {mentor.expertise_areas && mentor.expertise_areas.length > 0 && (
                   <div className="mb-4">
@@ -90,7 +97,8 @@ const Mentors = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+          </div>
+        )}
 
         {filteredMentors.length === 0 && (
           <div className="text-center py-12">

@@ -116,3 +116,81 @@ def decide_application(app_id):
     db.session.commit()
 
     return jsonify({'message': f'application {apprec.status}'}), 200
+
+
+@mentors_bp.route('/list', methods=['GET'])
+def list_mentors_public():
+    """Return mentor profiles only to requests with a valid backend JWT in Authorization header."""
+    auth = request.headers.get('Authorization')
+    if not auth or not auth.startswith('Bearer '):
+        return jsonify({'error': 'missing token'}), 401
+    token = auth.split(' ', 1)[1]
+    secret = current_app.config.get('JWT_SECRET') or current_app.config.get('SECRET_KEY')
+    try:
+        import jwt
+        payload = jwt.decode(token, secret, algorithms=['HS256'])
+    except Exception as e:
+        current_app.logger.info('invalid token for mentors list: %s', e)
+        return jsonify({'error': 'invalid token'}), 401
+
+    # optional: enforce role if needed
+    # if payload.get('role') not in ('student', 'mentor', 'admin'):
+    #     return jsonify({'error': 'forbidden'}), 403
+
+    mentors = Mentor.query.all()
+    out = []
+    for m in mentors:
+        user = User.query.filter_by(user_id=m.mentor_id).first()
+        out.append({
+            'mentor_id': m.mentor_id,
+            'name': user.name if user else None,
+            'email': user.email if user else None,
+            'profile_photo_url': user.profile_photo_url if user else None,
+            'bio': user.bio if user else None,
+            'expertise_areas': (m.expertise_areas.split(',') if m.expertise_areas else []),
+            'availability_status': m.availability_status,
+        })
+    return jsonify(out)
+
+
+@mentors_bp.route('/dev/become-mentor', methods=['POST'])
+def dev_become_mentor():
+    """Dev endpoint: Convert logged-in user to a mentor (requires valid JWT)."""
+    auth = request.headers.get('Authorization')
+    if not auth or not auth.startswith('Bearer '):
+        return jsonify({'error': 'missing token'}), 401
+    token = auth.split(' ', 1)[1]
+    secret = current_app.config.get('JWT_SECRET') or current_app.config.get('SECRET_KEY')
+    try:
+        import jwt
+        payload = jwt.decode(token, secret, algorithms=['HS256'])
+        user_id = payload.get('sub')
+    except Exception as e:
+        current_app.logger.warning('dev_become_mentor: token decode failed: %s', e)
+        return jsonify({'error': 'invalid token'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'user not found'}), 404
+
+    # Check if already a mentor
+    existing_mentor = Mentor.query.filter_by(mentor_id=user_id).first()
+    if existing_mentor:
+        return jsonify({'message': 'already a mentor', 'mentor_id': user_id}), 200
+
+    # Create mentor profile
+    data = request.get_json() or {}
+    expertise = data.get('expertise_areas', 'General Mentoring')
+    availability = data.get('availability_status', 'available')
+    
+    mentor = Mentor(
+        mentor_id=user_id,
+        expertise_areas=expertise,
+        availability_status=availability
+    )
+    db.session.add(mentor)
+    db.session.commit()
+    
+    current_app.logger.info(f'dev_become_mentor: user {user_id} became a mentor')
+    return jsonify({'message': 'mentor profile created', 'mentor_id': user_id}), 201
+

@@ -1,30 +1,26 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
+import { getBoardMembers } from "@/data/boardMembers";
 
 const About = () => {
-  const teamMembers = [
-    { name: "Team Member 1", role: "Founder & CEO" },
-    { name: "Team Member 2", role: "Program Director" },
-    { name: "Team Member 3", role: "Community Manager" },
-    { name: "Team Member 4", role: "STEM Coordinator" },
-  ];
+  const teamMembers = getBoardMembers();
 
   const journeyMilestones = [
-    { year: "2022", description: "Girls I Save was founded with a vision to empower young women in STEM across Africa" },
-    { year: "2023", description: "Launched our first mentorship program, connecting 100+ girls with industry professionals" },
-    { year: "2024", description: "Expanded to 5 countries, reaching over 1000 participants through workshops and events" },
-    { year: "2025", description: "Introducing advanced programs and building partnerships with tech companies" },
+    { year: "2023", description: "Started High School mentorship programmes to inspire young girls into STEM" },
+    { year: "2024", description: "Official Launch of our First STEM Cohort" },
+    { year: "2024", description: "Graduation of our First Physical STEM Cohort" },
+    { year: "2025", description: "Won the 2025 Presidential Innovation awards & Office Launch" },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="bg-primary text-primary-foreground py-20">
+      {/* Hero Section (clean, centered, dark green) */}
+      <section className="py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
             We believe that literacy is freedom. It's the way to a fairer and more inclusive Africa.
           </h1>
         </div>
@@ -36,10 +32,10 @@ const About = () => {
           <h2 className="text-3xl font-bold text-primary mb-6 text-center">About Us</h2>
           <Card className="p-8 bg-card rounded-2xl shadow-card">
             <p className="text-foreground/80 text-lg leading-relaxed mb-4">
-              Girls I Save is a non-profit organization dedicated to empowering girls and young women to pursue careers in science, technology, engineering, and mathematics (STEM). Through a supportive mix of mentorship, accessible education, and personalized career guidance, we help girls explore their interests, build practical skills, and connect with role models who reflect their dreams.
+              Girls I Save is a social enterprise dedicated to empowering youth across Africa to pursue education and careers in science, technology, engineering, and mathematics (STEM). Using a sustainable mix of mentorship, skills-based training, and practical learning experiences, we help young people explore their interests, build workplace-ready skills, and connect with role models and opportunities.
             </p>
             <p className="text-foreground/80 text-lg leading-relaxed">
-              We are committed to breaking down barriers and creating pathways for the next generation of women leaders in STEM fields across Africa.
+              We partner with schools, communities, and industry to break down barriers and create inclusive pathways for the next generation of talented youth in STEM and related industries.
             </p>
           </Card>
         </div>
@@ -77,15 +73,23 @@ const About = () => {
       {/* Team Section */}
       <section className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-primary mb-12 text-center">Meet The Team</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {teamMembers.map((member, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {teamMembers.map((member) => (
             <Card
-              key={index}
-              className="p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all text-center"
+              key={member.id}
+              className="rounded-2xl shadow-card hover:shadow-card-hover transition-all overflow-hidden"
             >
-              <div className="w-full aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl mb-4"></div>
-              <h3 className="font-bold text-foreground mb-1">{member.name}</h3>
-              <p className="text-sm text-foreground/60">{member.role}</p>
+              <div className="aspect-square overflow-hidden bg-primary/10">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">{member.name}</h3>
+                <p className="text-sm text-foreground/60">{member.role}</p>
+              </div>
             </Card>
           ))}
         </div>
