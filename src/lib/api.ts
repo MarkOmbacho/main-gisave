@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Resolve base URL from env and normalize (no trailing slash)
+const rawBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+export const baseURL = rawBase.replace(/\/$/, '');
+
+// Guard: in production we should not be using the localhost fallback
+if (import.meta.env.MODE === 'production' && /localhost|127\.0\.0\.1/.test(baseURL)) {
+  // eslint-disable-next-line no-console
+  console.error('VITE_API_URL is not set for production. Frontend may be pointing to localhost.');
+}
 
 export const api = axios.create({
   baseURL,
@@ -45,3 +53,20 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+    /**
+     * checkApi - lightweight connectivity check to the API root
+     * Returns: response data if OK, throws if unreachable or non-JSON
+     */
+    export async function checkApi(timeout = 5000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const res = await api.get('/', { signal: controller.signal });
+        clearTimeout(id);
+        return res.data;
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    }

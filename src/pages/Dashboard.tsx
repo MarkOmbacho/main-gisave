@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { ConnectionStatus } from "@/components/ConnectionStatus";
+import { checkApi } from "@/lib/api";
 import {
   BookOpen,
   Users,
@@ -97,6 +98,16 @@ const Dashboard = () => {
         .single()
         .then(({ data }) => setPremium(data));
     }
+
+    // Quick API connectivity check (show toast if fails)
+    checkApi().catch((e) => {
+      console.error('API connectivity check failed', e);
+      toast({
+        title: 'Backend Unreachable',
+        description: 'Could not reach the backend API. Please check deployment and VITE_API_URL.',
+        variant: 'destructive',
+      });
+    });
   }, [user]);
 
   // Fetch real data on mount
