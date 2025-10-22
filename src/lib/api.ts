@@ -22,11 +22,26 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log the error for debugging
+    console.error('API Error:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.response?.data
+    });
+
     if (error.response?.status === 401) {
       // Handle unauthorized access
       localStorage.removeItem('backend_token');
       window.location.href = '/auth';
     }
+    
+    // Check if the response is HTML instead of JSON
+    if (error.response?.headers['content-type']?.includes('text/html')) {
+      console.error('Received HTML response instead of JSON');
+      error.message = 'Unexpected server response. Please try again later.';
+    }
+
     return Promise.reject(error);
   }
 );

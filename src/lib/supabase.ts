@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://sniypsdtsqlapdwnlvoh.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuaXlwc2R0c3FsYXBkd25sdm9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5ODExODgsImV4cCI6MjA3NjU1NzE4OH0.Eflm69gHO2Z0uhsdmmvEc8JnmPeOrseOJ4ScMrSk8mE';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+// Create a single instance of the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database table types
