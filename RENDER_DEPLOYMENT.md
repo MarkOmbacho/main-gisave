@@ -28,9 +28,9 @@ pip install -r requirements.txt
 
 ---
 
-### 3. **Start Command**
+### **3. Start Command**
 ```bash
-gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 app:app
+gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 wsgi:app
 ```
 
 **Explanation:**
@@ -39,9 +39,9 @@ gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 app:a
 - `--workers 2` - Use 2 worker processes
 - `--worker-class sync` - Synchronous worker (suitable for Flask)
 - `--timeout 30` - 30-second timeout for requests
-- `app:app` - Refers to `app` module with `app` Flask application object (from `app/__init__.py` and `wsgi.py`)
+- `wsgi:app` - Points to the `app` object in `wsgi.py` file (NOT `app:app`)
 
-> **Note:** Render assigns port 10000. Do not hardcode a different port.
+> **Important:** Use `wsgi:app` not `app:app`. The `app` object is defined in `backend/wsgi.py`, not in a root `app.py` file.
 
 ---
 
@@ -91,7 +91,7 @@ Free tier will be slow initially but adequate for MVP testing.
    - **Branch**: `main`
    - **Root Directory**: `backend`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 app:app`
+   - **Start Command**: `gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 wsgi:app`
 
 5. **Advanced**:
    - **Auto-Deploy**: Enable (auto-deploys on GitHub push)
@@ -181,7 +181,7 @@ main-gisave/
 
 **Root Directory**: `backend`  
 **Build Command**: `pip install -r requirements.txt`  
-**Start Command**: `gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 app:app`  
+**Start Command**: `gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 wsgi:app`  
 **Environment**:
 ```
 FLASK_ENV=production
