@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: gisave-backend
+    env: python
+    plan: free
+    # If deploying the entire repo, set this to backend/
+    # If using a monorepo structure
+    rootDir: backend
+    
+    # Build command - installs Python dependencies
+    buildCommand: pip install -r requirements.txt
+    
+    # Start command - runs the Flask app with gunicorn
+    startCommand: gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 app:app
+    
+    # Environment variables (set these in the Render dashboard)
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URL
+        # Set this in Render dashboard (MySQL connection string)
+        sync: false
