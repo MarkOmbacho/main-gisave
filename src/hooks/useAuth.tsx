@@ -1,218 +1,261 @@
-import { useEffect, useState } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { Session, User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
+import type { UserProfile } from '../lib/supabase';
+import { useToast } from './use-toast';
 
-export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
+type AuthContextType = {
+  session: Session | null;
+  user: User | null;
+  profile: UserProfile | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
+  loading: boolean;
+  error: Error | null;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      }
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName
-        }
-      }
-    });
-    
-    if (error) {
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setError(error as Error);
       toast({
-        title: "Signup Error",
-        description: error.message,
+        title: "Error",
+        description: "Could not fetch user profile",
         variant: "destructive",
       });
-      return { error };
     }
-    
-    toast({
-      title: "Success!",
-      description: "Your account has been created. Please check your email.",
-    });
-    
-    return { error: null };
   };
 
-  // Sync backend user record after Supabase signup (create profile placeholder)
-  const syncBackendUser = async (email: string, name?: string, avatarUrl?: string, bio?: string) => {
+  const signUp = async (email: string, password: string, name: string) => {
     try {
-      await fetch('/users/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, profile_photo_url: avatarUrl, bio })
+      setError(null);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          data: {
+            name,
+          },
+        },
       });
-    } catch (e) {
-      console.error('failed to sync backend user', e);
+      if (error) throw error;
+      
+      toast({
+        title: "Success!",
+        description: "Please check your email to verify your account.",
+      });
+    } catch (error) {
+      console.error('Error signing up:', error);
+      setError(error as Error);
+      toast({
+        title: "Signup Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      throw error;
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      
+      toast({
+        title: "Welcome back!",
+        description: "Successfully signed in.",
+      });
+    } catch (error) {
+      console.error('Error signing in:', error);
+      setError(error as Error);
       toast({
         title: "Login Error",
-        description: error.message,
+        description: (error as Error).message,
         variant: "destructive",
       });
-      return { error };
-    }
-    
-    return { error: null };
-  };
-
-  // obtain backend JWT after sign in (or sign up) — call /users/sync-token
-  const obtainBackendToken = async (email: string, name?: string, avatarUrl?: string) => {
-    // If a token already exists, return it (simple cache). We could decode and check exp if needed.
-    const existing = localStorage.getItem('backend_token');
-    if (existing) return existing;
-
-    try {
-      console.log('obtainBackendToken: calling /users/sync-token with email:', email);
-      const res = await fetch('/users/sync-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, profile_photo_url: avatarUrl })
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('obtainBackendToken failed:', res.status, errText);
-        return null;
-      }
-      const data = await res.json();
-      console.log('obtainBackendToken response:', data);
-      if (data.access_token) {
-        localStorage.setItem('backend_token', data.access_token);
-        if (data.user_id) localStorage.setItem('backend_user_id', String(data.user_id));
-        console.log('obtainBackendToken: token saved, user_id:', data.user_id);
-        return data.access_token;
-      } else {
-        console.error('obtainBackendToken: no access_token in response:', data);
-        return null;
-      }
-    } catch (e) {
-      console.error('obtainBackendToken exception:', String(e));
-    }
-    return null;
-  };
-
-  const backendUserId = () => {
-    const v = localStorage.getItem('backend_user_id');
-    return v ? Number(v) : null;
-  };
-
-  const updateProfileBackend = async (payload: any) => {
-    let token = localStorage.getItem('backend_token');
-    if (!token) {
-      console.log('updateProfileBackend: no token in localStorage, skipping');
-      return null;
-    }
-    try {
-      const res = await fetch('/users/me', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('updateProfileBackend failed:', res.status, errText);
-      }
-      return res;
-    } catch (e) {
-      console.error('updateProfileBackend exception:', String(e));
-      return null;
-    }
-  };
-
-  const becomeMentor = async (expertise_areas?: string, availability_status?: string) => {
-    const token = localStorage.getItem('backend_token');
-    if (!token) {
-      console.error('becomeMentor: no token in localStorage');
-      return null;
-    }
-    try {
-      console.log('becomeMentor: calling /mentors/dev/become-mentor');
-      const res = await fetch('/mentors/dev/become-mentor', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({ 
-          expertise_areas: expertise_areas || 'General Mentoring', 
-          availability_status: availability_status || 'available' 
-        }),
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('becomeMentor failed:', res.status, errText);
-        return null;
-      }
-      const data = await res.json();
-      console.log('becomeMentor response:', data);
-      return data;
-    } catch (e) {
-      console.error('becomeMentor exception:', String(e));
-      return null;
+      throw error;
     }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    // Clear backend tokens and user id from localStorage
-    localStorage.removeItem('backend_token');
-    localStorage.removeItem('backend_user_id');
-    
-    if (error) {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setProfile(null);
+      toast({
+        title: "Goodbye!",
+        description: "Successfully signed out.",
+      });
+    } catch (error) {
+      console.error('Error signing out:', error);
+      setError(error as Error);
       toast({
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
         variant: "destructive",
       });
+      throw error;
     }
   };
 
-  return {
-    user,
-    session,
-    loading,
-    signUp,
-    signIn,
-    signOut,
-    syncBackendUser,
-    obtainBackendToken,
-    updateProfileBackend,
-    backendUserId,
-    becomeMentor,
+  const sendPasswordReset = async (email: string) => {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      if (error) throw error;
+      
+      toast({
+        title: "Password Reset Sent",
+        description: "Please check your email for the reset link.",
+      });
+    } catch (error) {
+      console.error('Error sending password reset:', error);
+      setError(error as Error);
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
-};
+
+  const updateProfile = async (profile: Partial<UserProfile>) => {
+    try {
+      setError(null);
+      
+      if (!user) throw new Error('No user logged in');
+      
+      // First update the auth metadata
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          name: profile.name,
+          avatar_url: profile.avatar_url,
+        }
+      });
+      
+      if (updateError) throw updateError;
+
+      // Then update or create the profile record
+      const { error: upsertError } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: user.id,
+          ...profile,
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (upsertError) throw upsertError;
+
+      // Refresh the profile
+      await fetchProfile(user.id);
+      
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError(error as Error);
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const value = {
+    session,
+    user,
+    profile,
+    signIn,
+    signUp,
+    signOut,
+    sendPasswordReset,
+    updateProfile,
+    loading,
+    error,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+    user,
+    profile,
+    signIn,
+    signUp,
+    signOut,
+    sendPasswordReset,
+    loading,
+    error,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/lib/supabase";
 
 const Profile = () => {
-  const { user, loading, obtainBackendToken, updateProfileBackend, syncBackendUser } = useAuth();
+  const { user, profile, loading, updateProfile } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [region, setRegion] = useState("");
@@ -19,124 +22,89 @@ const Profile = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!loading && !user) {
-      return;
-    }
-    const init = async () => {
-      if (!user) return;
-      // populate fields from supabase profile as fallback
-      setName((user.user_metadata as any)?.full_name || user.email || "");
-      setAvatarUrl((user.user_metadata as any)?.avatar_url || null);
-
-      // obtain backend token (if not present) so we can call backend
-      await obtainBackendToken(user.email, (user.user_metadata as any)?.full_name, (user.user_metadata as any)?.avatar_url);
-
-      // if backend_user_id is stored, fetch backend profile and prefill
-      const backendId = localStorage.getItem('backend_user_id');
-      if (backendId) {
-        try {
-          const resp = await fetch(`/users/${backendId}`);
-          if (resp.ok) {
-            const data = await resp.json();
-            setName(data.name || (user.user_metadata as any)?.full_name || user.email || "");
-            setBio(data.bio || "");
-            setRegion(data.region || "");
-            if (data.profile_photo_url) setAvatarUrl(data.profile_photo_url);
-          }
-        } catch (e) {
-          console.error('failed to fetch backend profile', e);
-        }
+    if (!loading) {
+      if (!user) {
+        navigate('/auth');
+        return;
       }
-    };
-    init();
-  }, [user, loading, obtainBackendToken]);
+      
+      // Set initial values from profile or user metadata
+      if (profile) {
+        setName(profile.name || '');
+        setBio(profile.bio || '');
+        setRegion(profile.region || '');
+        setAvatarUrl(profile.avatar_url || null);
+      } else {
+        setName(user.user_metadata?.name || user.email?.split('@')[0] || '');
+        setAvatarUrl(user.user_metadata?.avatar_url || null);
+      }
+    }
+  }, [user, profile, loading, navigate]);
 
   const onUploadClick = () => {
     fileRef.current?.click();
   };
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f || !user) return;
-    const form = new FormData();
-    form.append('file', f);
-    form.append('user_id', (user.id as unknown as string) || '');
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
     try {
-      const res = await fetch('/users/upload-avatar', { method: 'POST', body: form });
-      if (!res.ok) throw new Error('upload failed');
-      const data = await res.json();
-      setAvatarUrl(data.url);
-      toast({ title: 'Upload successful', description: 'Your avatar was uploaded.', variant: 'default' });
+      // Upload file to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const { error: uploadError, data } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      if (data) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(data.path);
+
+        setAvatarUrl(publicUrl);
+        toast({
+          title: 'Upload successful',
+          description: 'Your avatar was uploaded.',
+        });
+      }
     } catch (err) {
-      console.error(err);
-      toast({ title: 'Upload failed', description: String(err), variant: 'destructive' });
+      console.error('Upload error:', err);
+      toast({
+        title: 'Upload failed',
+        description: err instanceof Error ? err.message : 'Failed to upload avatar',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
+
     try {
-      const payload: any = { name, bio, region };
-      if (avatarUrl) payload.profile_photo_url = avatarUrl;
+      await updateProfile({
+        name,
+        bio,
+        region,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString(),
+      });
 
-      const token = localStorage.getItem('backend_token');
-      const backendId = localStorage.getItem('backend_user_id');
-
-      // If we have a backend token, use protected endpoint
-      if (token) {
-        const res = await updateProfileBackend(payload);
-        if (res && res.ok) {
-          toast({ title: 'Profile saved', description: 'Your profile was updated.' });
-          // navigate to dashboard after saving
-          window.location.href = '/dashboard';
-        } else {
-          console.error('failed to save profile with token', res);
-          toast({ title: 'Save failed', description: 'Could not save your profile', variant: 'destructive' });
-        }
-      } else if (backendId) {
-        // Fallback: use dev-friendly public endpoint to allow onboarding without token
-        try {
-          const resp = await fetch(`/users/${backendId}/profile`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (resp.ok) {
-            // ensure backend user exists and obtain a token for future protected calls
-            await obtainBackendToken(user.email, name, avatarUrl || undefined);
-            toast({ title: 'Profile saved', description: 'Your profile was updated. You can now access protected features.' });
-            window.location.href = '/dashboard';
-          } else {
-            const txt = await resp.text();
-            console.error('fallback save failed', resp.status, txt);
-            toast({ title: 'Save failed', description: 'Could not save your profile (fallback)', variant: 'destructive' });
-          }
-        } catch (e) {
-          console.error('fallback save exception', e);
-          toast({ title: 'Save failed', description: String(e), variant: 'destructive' });
-        }
-      } else {
-        // No token and no backend id — try to sync backend user then save
-        try {
-          await syncBackendUser(user.email, name, avatarUrl || undefined, bio || undefined);
-          const newToken = await obtainBackendToken(user.email, name, avatarUrl || undefined);
-          if (newToken) {
-            const res = await updateProfileBackend(payload);
-            if (res && res.ok) {
-              toast({ title: 'Profile saved', description: 'Your profile was updated.' });
-              window.location.href = '/dashboard';
-            } else {
-              toast({ title: 'Save failed', description: 'Could not save after syncing', variant: 'destructive' });
-            }
-          } else {
-            toast({ title: 'Save failed', description: 'Could not obtain backend token', variant: 'destructive' });
-          }
-        } catch (e) {
-          console.error('sync-and-save failed', e);
-          toast({ title: 'Save failed', description: String(e), variant: 'destructive' });
-        }
+      // If we're in onboarding mode, redirect to dashboard
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('onboard')) {
+        navigate('/dashboard');
       }
+    } catch (err) {
+      console.error('Save error:', err);
+      toast({
+        title: 'Save failed',
+        description: err instanceof Error ? err.message : 'Failed to save profile',
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
