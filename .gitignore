@@ -30,3 +30,8 @@ backend/.env.local
 *.sln
 *.sw?
 \n# Python cache files\n__pycache__/\n*.pyc\n
+
+# Python cache files
+__pycache__/
+*.pyc
+
