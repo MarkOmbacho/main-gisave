@@ -13,6 +13,7 @@ export type UserProfile = {
   bio?: string;
   region?: string;
   avatar_url?: string;
+  mentor_status?: 'none' | 'pending' | 'approved' | 'rejected';
   is_premium: boolean;
   is_active: boolean;
   created_at: string;

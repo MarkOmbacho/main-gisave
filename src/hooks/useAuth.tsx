@@ -13,6 +13,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
+  becomeMentor: () => Promise<void>;
   loading: boolean;
   error: Error | null;
 };
@@ -225,6 +226,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const becomeMentor = async () => {
+    try {
+      setError(null);
+      if (!user) throw new Error('No user logged in');
+
+      // Create mentor application record
+      const { error: applicationError } = await supabase
+        .from('mentor_applications')
+        .insert({
+          user_id: user.id,
+          status: 'pending',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+
+      if (applicationError) throw applicationError;
+
+      // Update user profile to indicate pending mentor status
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          mentor_status: 'pending',
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id);
+
+      if (profileError) throw profileError;
+
+      await fetchProfile(user.id);
+
+      toast({
+        title: "Application Submitted",
+        description: "Your mentor application is being reviewed. We'll notify you of the decision.",
+      });
+    } catch (error) {
+      console.error('Error applying for mentor:', error);
+      setError(error as Error);
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   const value = {
     session,
     user,
@@ -234,6 +281,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     sendPasswordReset,
     updateProfile,
+    becomeMentor,
     loading,
     error,
   };
