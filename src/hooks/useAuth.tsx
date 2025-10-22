@@ -12,6 +12,7 @@ type AuthContextType = {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
+  updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   loading: boolean;
   error: Error | null;
 };
@@ -233,18 +234,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     sendPasswordReset,
     updateProfile,
-    loading,
-    error,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-    user,
-    profile,
-    signIn,
-    signUp,
-    signOut,
-    sendPasswordReset,
     loading,
     error,
   };
