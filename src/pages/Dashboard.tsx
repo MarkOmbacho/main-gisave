@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
+import { ConnectionStatus } from "@/components/ConnectionStatus";
 import {
   BookOpen,
   Users,
@@ -216,6 +217,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-secondary/20">
       <Navigation />
+      
+      {import.meta.env.DEV && <ConnectionStatus />}
       
       <main className="flex-1 container mx-auto px-4 py-8 lg:py-12">
         {/* Header Section */}

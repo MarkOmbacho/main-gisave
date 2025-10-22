@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
+    proxy: mode === 'development' ? {
       '/users': {
         target: 'http://127.0.0.1:5000',
         changeOrigin: true,
@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => ({
         target: 'http://127.0.0.1:5000',
         changeOrigin: true,
       },
-    },
+    } : undefined,
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
