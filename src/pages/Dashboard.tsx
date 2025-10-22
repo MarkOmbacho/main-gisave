@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,7 @@ import {
 
 const Dashboard = () => {
   const { user, loading, signOut, becomeMentor } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [roles, setRoles] = useState<string[]>([]);
@@ -129,13 +131,20 @@ const Dashboard = () => {
   const handleBecomeMentor = async () => {
     setBecomingMentor(true);
     try {
-      const result = await becomeMentor('General Mentoring', 'available');
-      if (result) {
-        setIsMentor(true);
-        // Show success notification
-      }
+      await becomeMentor();
+      setIsMentor(true);
+      // Show success notification using toast
+      toast({
+        title: "Application Submitted",
+        description: "Your mentor application is being reviewed.",
+      });
     } catch (e) {
       console.error('Failed to become mentor:', e);
+      toast({
+        title: "Error",
+        description: "Failed to submit mentor application. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setBecomingMentor(false);
     }
