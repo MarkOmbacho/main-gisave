@@ -3,12 +3,27 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Create a single instance of the Supabase client when vars are present.
+// We avoid throwing at build time so CI (Vercel) won't fail when envs are absent.
+let _supabase: any = null;
+if (supabaseUrl && supabaseAnonKey) {
+  _supabase = createClient(supabaseUrl, supabaseAnonKey);
+} else {
+  // Provide a helpful runtime-failing proxy so usage errors are explicit.
+  // This prevents build-time crashes but still surfaces a clear error if code tries to use the client.
+  // eslint-disable-next-line no-console
+  console.warn('VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set. Supabase client not initialized.');
+  _supabase = new Proxy({}, {
+    get() {
+      return () => {
+        throw new Error('Supabase client not initialized. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in environment variables.');
+      };
+    },
+  });
 }
 
-// Create a single instance of the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = _supabase;
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 // Database table types
 export type UserProfile = {
