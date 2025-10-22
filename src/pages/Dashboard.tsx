@@ -180,22 +180,6 @@ const Dashboard = () => {
       color: "text-accent",
       bgColor: "bg-accent/10",
     },
-    {
-      title: "Learning Streak",
-      value: `${achievements.length} days` || "0 days",
-      change: achievements.length > 0 ? "Keep it up!" : "Start learning!",
-      icon: TrendingUp,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-    },
-    {
-      title: "Achievements",
-      value: achievements.length,
-      change: achievements.length > 0 ? `${achievements.length} unlocked` : "No achievements yet",
-      icon: Award,
-      color: "text-accent",
-      bgColor: "bg-accent/10",
-    },
   ];
 
   // Replace recentActivities with activities from notifications
@@ -292,58 +276,7 @@ const Dashboard = () => {
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Content Area */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Current Progress */}
-            <Card className="border-none shadow-card bg-gradient-card">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Target className="h-6 w-6 text-primary" />
-                      Current Progress
-                    </CardTitle>
-                    <CardDescription className="mt-1">Track your learning journey</CardDescription>
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/10">
-                    View All
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Python Programming</span>
-                    <span className="text-muted-foreground">75%</span>
-                  </div>
-                  <Progress value={75} className="h-2" />
-                  <p className="text-xs text-muted-foreground">3 modules remaining</p>
-                </div>
-                
-                <Separator />
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Digital Marketing</span>
-                    <span className="text-muted-foreground">45%</span>
-                  </div>
-                  <Progress value={45} className="h-2" />
-                  <p className="text-xs text-muted-foreground">5 modules remaining</p>
-                </div>
-                
-                <Separator />
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Leadership Skills</span>
-                    <span className="text-muted-foreground">90%</span>
-                  </div>
-                  <Progress value={90} className="h-2" />
-                  <p className="text-xs text-muted-foreground">Almost complete!</p>
-                </div>
-              </CardContent>
-            </Card>
-
+          <div className="lg:col-span-2">
             {/* Quick Actions */}
             <Card className="border-none shadow-card bg-gradient-card">
               <CardHeader>
@@ -401,33 +334,6 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Recent Activity */}
-            <Card className="border-none shadow-card bg-gradient-card">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recentActivities.map((activity, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors duration-200">
-                    <div className={`${activity.color} bg-primary/10 p-2 rounded-lg`}>
-                      <activity.icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium leading-tight">{activity.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
-                    </div>
-                  </div>
-                ))}
-                <Button variant="ghost" className="w-full text-primary hover:bg-primary/10 mt-2">
-                  View All Activity
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
-
             {/* Upcoming Events */}
             <Card className="border-none shadow-card bg-gradient-card">
               <CardHeader>
@@ -437,76 +343,36 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {upcomingEvents.map((event, index) => (
-                  <div key={index} className="p-4 rounded-lg border-2 border-primary/20 bg-background/50 hover:border-primary transition-colors duration-200">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                        <event.icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm">{event.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{event.subtitle}</p>
-                        <p className="text-xs text-primary mt-2 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {event.time}
-                        </p>
+                {upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((event, index) => (
+                    <div key={index} className="p-4 rounded-lg border-2 border-primary/20 bg-background/50 hover:border-primary transition-colors duration-200">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                          <event.icon className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">{event.title}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{event.subtitle}</p>
+                          <p className="text-xs text-primary mt-2 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {event.time}
+                          </p>
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <Calendar className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-muted-foreground">No upcoming events right now</p>
                   </div>
-                ))}
+                )}
                 <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/5">
                   View Calendar
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               </CardContent>
             </Card>
-
-            {/* Profile Completion */}
-            <Card className="border-none shadow-card bg-gradient-to-br from-primary/10 via-background to-accent/10">
-              <CardHeader>
-                <CardTitle className="text-xl">Profile Completion</CardTitle>
-                <CardDescription>Complete your profile to unlock more features</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>85% Complete</span>
-                    <span className="text-muted-foreground">15% remaining</span>
-                  </div>
-                  <Progress value={85} className="h-2" />
-                </div>
-                <Button className="w-full" variant="outline" onClick={() => navigate("/dashboard")}>
-                  Complete Profile
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Become a Mentor */}
-            {!isMentor && (
-              <Card className="border-none shadow-card bg-gradient-to-br from-accent/10 via-background to-primary/10">
-                <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-accent" />
-                    Become a Mentor
-                  </CardTitle>
-                  <CardDescription>Share your expertise and help others grow</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Ready to guide the next generation? Join our mentor community and make an impact.
-                  </p>
-                  <Button 
-                    className="w-full bg-accent hover:bg-accent/90 text-white" 
-                    onClick={handleBecomeMentor}
-                    disabled={becomingMentor}
-                  >
-                    {becomingMentor ? "Setting up..." : "Become a Mentor"}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </main>
