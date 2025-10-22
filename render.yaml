@@ -3,21 +3,28 @@ services:
     name: gisave-backend
     env: python
     plan: free
-    # If deploying the entire repo, set this to backend/
-    # If using a monorepo structure
     rootDir: backend
-    
-    # Build command - installs Python dependencies
-    buildCommand: pip install -r requirements.txt
-    
-    # Start command - runs the Flask app with gunicorn
-    # Points to wsgi:app (wsgi.py file contains the 'app' object)
-    startCommand: gunicorn --bind 0.0.0.0:10000 --workers 2 --worker-class sync --timeout 30 wsgi:app
-    
-    # Environment variables (set these in the Render dashboard)
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      python -m flask db upgrade
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --worker-class sync --timeout 30 --max-requests 1000 --max-requests-jitter 50 wsgi:app
+    healthCheckPath: /health
+    autoDeploy: true
     envVars:
       - key: FLASK_ENV
         value: production
+      - key: FLASK_APP
+        value: wsgi.py
+      - key: PYTHONPATH
+        value: .
       - key: DATABASE_URL
-        # Set this in Render dashboard (MySQL connection string)
         sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+    disk:
+      name: uploads
+      mountPath: /opt/render/project/src/instance/uploads
+      sizeGB: 1
