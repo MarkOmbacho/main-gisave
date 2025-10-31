@@ -17,11 +17,19 @@ export const api = axios.create({
   },
 });
 
-// Add request interceptor to include auth token
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('backend_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Add request interceptor to include auth token from Supabase
+api.interceptors.request.use(async (config) => {
+  try {
+    // Get Supabase session token instead of backend token
+    const { supabase } = await import('./supabase');
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    }
+  } catch (error) {
+    // If Supabase is not configured or fails, continue without token
+    console.warn('Could not get Supabase session for API request:', error);
   }
   return config;
 });
@@ -29,7 +37,7 @@ api.interceptors.request.use((config) => {
 // Add response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // Log the error for debugging
     console.error('API Error:', {
       status: error.response?.status,
@@ -39,8 +47,13 @@ api.interceptors.response.use(
     });
 
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('backend_token');
+      // Handle unauthorized access - sign out through Supabase
+      try {
+        const { supabase } = await import('./supabase');
+        await supabase.auth.signOut();
+      } catch (supabaseError) {
+        console.warn('Could not sign out through Supabase:', supabaseError);
+      }
       window.location.href = '/auth';
     }
     

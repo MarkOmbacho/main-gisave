@@ -15,7 +15,7 @@ const Index = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 md:py-24">
+      <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="text-center max-w-4xl mx-auto mb-12 animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6 leading-tight">
             BUILD, LEAD AND OWN THE FUTURE
@@ -47,7 +47,7 @@ const Index = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1 animate-fade-in">
             <img
@@ -71,7 +71,7 @@ const Index = () => {
       </section>
 
       {/* Impact Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
             Our Impact
@@ -91,7 +91,7 @@ const Index = () => {
       </section>
 
       {/* Programs Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
             Our Programs
@@ -115,7 +115,7 @@ const Index = () => {
       </section>
 
       {/* Partners Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
             Our Partners

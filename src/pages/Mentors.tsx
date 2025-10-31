@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/lib/supabase";
 
 const Mentors = () => {
   const [mentors, setMentors] = useState<any[]>([]);
@@ -20,12 +21,13 @@ const Mentors = () => {
 
   const fetchMentors = async () => {
     try {
-      const token = localStorage.getItem('backend_token');
-      const headers: any = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const res = await fetch('/mentors/list', { headers });
-      if (!res.ok) throw new Error('failed to load mentors');
-      const data = await res.json();
+      // Fetch mentors from Supabase instead of backend API
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('mentor_status', 'approved');
+      
+      if (error) throw error;
       setMentors(data || []);
     } catch (e) {
       console.error(e);

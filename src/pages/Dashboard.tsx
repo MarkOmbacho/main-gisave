@@ -58,32 +58,16 @@ const Dashboard = () => {
       supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("user_id", user.id)
         .single()
-        .then(({ data }) => setProfile(data));
-
-      // fetch backend profile to detect completeness (uses backend_user_id if present)
-      const backendId = localStorage.getItem('backend_user_id');
-      if (backendId) {
-        fetch(`/users/${backendId}`)
-          .then((res) => res.json())
-          .then((data) => {
-            // if missing name or bio or avatar, show a CTA (we stash it in profile)
-            setProfile((p: any) => ({ ...p, backend: data }));
-          })
-          .catch(() => {});
-        
-        // Check if user is already a mentor
-        fetch(`/mentors/list`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('backend_token')}` }
+        .then(({ data }) => {
+          setProfile(data);
+          // Check mentor status from Supabase profile
+          setIsMentor(data?.mentor_status === 'approved');
         })
-          .then((res) => res.json())
-          .then((data) => {
-            const userIsMentor = data.some((m: any) => m.mentor_id === Number(backendId));
-            setIsMentor(userIsMentor);
-          })
-          .catch(() => {});
-      }
+        .catch((error) => {
+          console.error('Error fetching profile:', error);
+        });
 
       supabase
         .from("user_roles")
@@ -230,7 +214,7 @@ const Dashboard = () => {
                 <div>
                   <div className="flex items-center gap-3">
                     <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Welcome back, {profile?.full_name?.split(" ")[0] || "User"}! 👋</h1>
-                    {profile?.backend && (!profile?.backend?.name || !profile?.backend?.bio || !profile?.backend?.profile_photo_url) && (
+                    {profile && (!profile?.name || !profile?.bio || !profile?.avatar_url) && (
                       <Button onClick={() => navigate('/profile')} className="rounded-xl bg-primary text-primary-foreground">Complete your profile</Button>
                     )}
                   </div>
