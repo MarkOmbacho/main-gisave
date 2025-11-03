@@ -18,7 +18,7 @@ const About = () => {
       <Navigation />
 
       {/* Hero Section (clean, centered, dark green) */}
-      <section className="py-20">
+      <section className="py-8">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
             We believe that literacy is freedom. It's the way to a fairer and more inclusive Africa.
@@ -27,23 +27,23 @@ const About = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-6 text-center">About Us</h2>
-          <Card className="p-8 bg-card rounded-2xl shadow-card">
+          <div className="px-4">
             <p className="text-foreground/80 text-lg leading-relaxed mb-4">
               Girls I Save is a social enterprise dedicated to empowering youth across Africa to pursue education and careers in science, technology, engineering, and mathematics (STEM). Using a sustainable mix of mentorship, skills-based training, and practical learning experiences, we help young people explore their interests, build workplace-ready skills, and connect with role models and opportunities.
             </p>
             <p className="text-foreground/80 text-lg leading-relaxed">
               We partner with schools, communities, and industry to break down barriers and create inclusive pathways for the next generation of talented youth in STEM and related industries.
             </p>
-          </Card>
+          </div>
         </div>
       </section>
 
       {/* Journey Timeline */}
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-primary mb-12 text-center">Our Journey</h2>
+      <section className="container mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-primary mb-8 text-center">Our Journey</h2>
         <div className="max-w-3xl mx-auto">
           <div className="relative">
             {/* Timeline Line */}
@@ -71,8 +71,8 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-primary mb-12 text-center">Meet The Team</h2>
+      <section className="container mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-primary mb-8 text-center">Meet The Team</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {teamMembers.map((member) => (
             <Card
