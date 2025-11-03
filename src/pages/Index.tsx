@@ -35,7 +35,7 @@ const Index = () => {
             <div className="relative w-full pb-[56.25%]">
               <iframe
                 className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/ifwVNp8uoiQ?rel=0&showinfo=0"
+                src="https://www.youtube.com/embed/YxtvMTI6rkw?rel=0&showinfo=0"
                 title="Girls I Save - Hero Video"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
