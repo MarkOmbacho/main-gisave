@@ -30,8 +30,8 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         {/* Newsletter Section */}
         <div className="mb-12 text-center max-w-2xl mx-auto">
-          <h3 className="text-2xl font-bold mb-3">Newsletter</h3>
-          <p className="mb-6 opacity-90">
+          <h3 className="text-2xl font-normal mb-3" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Newsletter</h3>
+          <p className="mb-6 opacity-90" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Get news of what we are supporting and more by subscribing to our newsletter
           </p>
           <div className="flex justify-center">
@@ -46,7 +46,7 @@ const Footer = () => {
                   Subscribe
                 </Button>
               </div>
-              <p className="text-xs mt-3 opacity-75 text-left">
+              <p className="text-xs mt-3 opacity-75 text-left" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                 By subscribing, you agree to Girls I Save Privacy policy
               </p>
             </div>
@@ -58,15 +58,15 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Who we are */}
             <div>
-              <h4 className="font-bold text-lg mb-2">Who we are</h4>
+              <h4 className="font-normal text-lg mb-2" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Who we are</h4>
               <div className="flex flex-col gap-1 text-sm opacity-90">
-                <Link to="/about" className="hover:text-primary-foreground transition-colors">
+                <Link to="/about" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   Our Mission
                 </Link>
-                <Link to="/about" className="hover:text-primary-foreground transition-colors">
+                <Link to="/about" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   About Us
                 </Link>
-                <Link to="/about" className="hover:text-primary-foreground transition-colors">
+                <Link to="/about" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   Our Team
                 </Link>
               </div>
@@ -74,15 +74,15 @@ const Footer = () => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-bold text-lg mb-2">Quick Links</h4>
+              <h4 className="font-normal text-lg mb-2" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Quick Links</h4>
               <div className="flex flex-col gap-1 text-sm opacity-90">
-                <Link to="/" className="hover:text-primary-foreground transition-colors">
+                <Link to="/" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   Home
                 </Link>
-                <Link to="/programs" className="hover:text-primary-foreground transition-colors">
+                <Link to="/programs" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   Programs
                 </Link>
-                <Link to="/contact" className="hover:text-primary-foreground transition-colors">
+                <Link to="/contact" className="hover:text-primary-foreground transition-colors" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   Contact Us
                 </Link>
               </div>
@@ -90,7 +90,7 @@ const Footer = () => {
 
             {/* Social Media */}
             <div>
-              <h4 className="font-bold text-lg mb-2">Follow Us</h4>
+              <h4 className="font-normal text-lg mb-2" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Follow Us</h4>
               <div className="flex items-center gap-4">
                 {/* LinkedIn */}
                 <a 
@@ -149,9 +149,11 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="mt-8 text-center text-sm opacity-75">
+          <div className="mt-8 text-center text-sm opacity-75" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             © Girls I Save | 2025. All rights reserved.
           </div>
+          {/* Bottom spacing for sticky navigation */}
+          <div className="h-20"></div>
         </div>
       </div>
     </footer>

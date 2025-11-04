@@ -40,10 +40,10 @@ const Blog = () => {
       <Navigation />
       <main className="flex-1 container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+          <h1 className="text-4xl md:text-5xl font-normal text-primary mb-4" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Blog
           </h1>
-          <p className="text-foreground/80 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-foreground/80 text-lg max-w-2xl mx-auto mb-8" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Stories, insights, and inspiration from our community
           </p>
           <Input
@@ -67,18 +67,18 @@ const Blog = () => {
               )}
               <CardHeader>
                 <div className="flex gap-2 mb-2">
-                  {post.category && <Badge>{post.category}</Badge>}
+                  {post.category && <Badge style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{post.category}</Badge>}
                 </div>
-                <CardTitle className="text-xl line-clamp-2">{post.title}</CardTitle>
-                <CardDescription className="line-clamp-3">
+                <CardTitle className="text-xl line-clamp-2" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{post.title}</CardTitle>
+                <CardDescription className="line-clamp-3" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   {post.excerpt}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center text-sm text-foreground/60">
-                  <span>By {post.profiles?.full_name}</span>
+                  <span style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>By {post.profiles?.full_name}</span>
                   {post.published_at && (
-                    <span>{formatDistanceToNow(new Date(post.published_at))} ago</span>
+                    <span style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{formatDistanceToNow(new Date(post.published_at))} ago</span>
                   )}
                 </div>
               </CardContent>
@@ -88,7 +88,7 @@ const Blog = () => {
 
         {filteredPosts.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-foreground/60">No articles found. Check back soon!</p>
+            <p className="text-foreground/60" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>No articles found. Check back soon!</p>
           </div>
         )}
       </main>

@@ -45,10 +45,10 @@ const Mentors = () => {
       <Navigation />
       <main className="flex-1 container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+          <h1 className="text-4xl md:text-5xl font-normal text-primary mb-4" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Our Mentors
           </h1>
-          <p className="text-foreground/80 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-foreground/80 text-lg max-w-2xl mx-auto mb-8" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Connect with experienced professionals who are passionate about empowering the next generation of young leaders
           </p>
           <Input
@@ -62,7 +62,7 @@ const Mentors = () => {
 
         {!user && !loading ? (
           <div className="text-center py-12">
-            <p className="text-foreground/70">Login to access mentors</p>
+            <p className="text-foreground/70" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Login to access mentors</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -74,26 +74,26 @@ const Mentors = () => {
                     {mentor.name?.[0] || "M"}
                   </div>
                   <div>
-                    <CardTitle className="text-xl">{mentor.name}</CardTitle>
-                    <Badge className="mt-1">{mentor.expertise_areas?.[0] || "Mentor"}</Badge>
+                    <CardTitle className="text-xl" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{mentor.name}</CardTitle>
+                    <Badge className="mt-1" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{mentor.expertise_areas?.[0] || "Mentor"}</Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-foreground/80 mb-4">
+                <p className="text-sm text-foreground/80 mb-4" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   {mentor.bio || "Experienced STEM professional"}
                 </p>
                 {mentor.expertise_areas && mentor.expertise_areas.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-sm font-semibold mb-2">Expertise:</p>
+                    <p className="text-sm font-normal mb-2" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Expertise:</p>
                     <div className="flex flex-wrap gap-2">
                       {mentor.expertise_areas.map((area: string, idx: number) => (
-                        <Badge key={idx} variant="secondary">{area}</Badge>
+                        <Badge key={idx} variant="secondary" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>{area}</Badge>
                       ))}
                     </div>
                   </div>
                 )}
-                <Button className="w-full rounded-xl">
+                <Button className="w-full rounded-xl" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                   View Profile
                 </Button>
               </CardContent>
@@ -104,7 +104,7 @@ const Mentors = () => {
 
         {filteredMentors.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-foreground/60">No mentors found. Try adjusting your search.</p>
+            <p className="text-foreground/60" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>No mentors found. Try adjusting your search.</p>
           </div>
         )}
       </main>

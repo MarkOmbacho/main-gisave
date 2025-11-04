@@ -14,8 +14,8 @@ const Contact = () => {
       {/* Hero Section */}
       <section className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-normal mb-4" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Contact Us</h1>
+          <p className="text-xl opacity-90 max-w-2xl mx-auto" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
             Get in touch with us. We'd love to hear from you!
           </p>
         </div>
@@ -26,24 +26,24 @@ const Contact = () => {
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           {/* Contact Form */}
           <Card className="p-8 rounded-2xl shadow-card">
-            <h2 className="text-2xl font-bold text-primary mb-6">Send us a message</h2>
+            <h2 className="text-2xl font-normal text-primary mb-6" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Send us a message</h2>
             <form className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">Name</label>
+                <label className="block text-sm font-normal mb-2 text-foreground" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Name</label>
                 <Input placeholder="Your name" className="rounded-xl" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">Email</label>
+                <label className="block text-sm font-normal mb-2 text-foreground" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Email</label>
                 <Input type="email" placeholder="your@email.com" className="rounded-xl" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-foreground">Message</label>
+                <label className="block text-sm font-normal mb-2 text-foreground" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Message</label>
                 <Textarea
                   placeholder="Tell us what you're thinking..."
                   className="rounded-xl min-h-[150px]"
                 />
               </div>
-              <Button className="w-full rounded-xl py-6 bg-primary hover:bg-primary/90">
+              <Button className="w-full rounded-xl py-6 bg-primary hover:bg-primary/90" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>
                 Send Message
               </Button>
             </form>
@@ -51,15 +51,15 @@ const Contact = () => {
 
           {/* Contact Info */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-primary mb-6">Get in Touch</h2>
+            <h2 className="text-2xl font-normal text-primary mb-6" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Get in Touch</h2>
             <Card className="p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all">
               <div className="flex items-start gap-4">
                 <div className="bg-primary/10 p-3 rounded-xl">
                   <Mail className="text-primary" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-1">Email</h3>
-                  <p className="text-foreground/60">girlsisave2023@gmail.com</p>
+                  <h3 className="font-normal mb-1" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Email</h3>
+                  <p className="text-foreground/60" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>girlsisave2023@gmail.com</p>
                 </div>
               </div>
             </Card>
@@ -70,8 +70,8 @@ const Contact = () => {
                   <Phone className="text-primary" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-1">Phone</h3>
-                  <p className="text-foreground/60">+254 725 618 235</p>
+                  <h3 className="font-normal mb-1" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Phone</h3>
+                  <p className="text-foreground/60" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>+254 725 618 235</p>
                 </div>
               </div>
             </Card>
@@ -82,8 +82,8 @@ const Contact = () => {
                   <MapPin className="text-primary" size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-1">Location</h3>
-                  <p className="text-foreground/60">Mombasa, Kenya</p>
+                  <h3 className="font-normal mb-1" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Location</h3>
+                  <p className="text-foreground/60" style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}>Mombasa, Kenya</p>
                 </div>
               </div>
             </Card>
