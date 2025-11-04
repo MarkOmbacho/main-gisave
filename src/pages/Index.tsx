@@ -168,11 +168,11 @@ const Index = () => {
       <div className="h-20"></div>
 
       {/* Sticky Navigation for Scroll */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-        <nav className="bg-primary backdrop-blur-md rounded-full p-4 border border-primary/30 shadow-2xl">
-          <div className="flex items-center gap-6">
+      <div className="fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-2 w-full max-w-none sm:max-w-fit">
+        <nav className="bg-primary backdrop-blur-md rounded-full p-2 sm:p-4 border border-primary/30 shadow-2xl mx-auto max-w-[calc(100vw-1rem)] sm:max-w-none overflow-hidden">
+          <div className="flex items-center justify-center gap-1 sm:gap-3 lg:gap-6 flex-wrap sm:flex-nowrap">
             {navItems.map((item, index) => (
-              <div key={index} className="relative">
+              <div key={index} className="relative flex-shrink-0">
                 {item.hasDropdown ? (
                   <div
                     className="relative"
@@ -180,19 +180,19 @@ const Index = () => {
                     onMouseLeave={handleDropdownLeave}
                   >
                     <button
-                      className={`flex items-center gap-1 text-background hover:text-accent transition-colors font-normal px-4 py-2 rounded-full ${
+                      className={`flex items-center gap-1 text-background hover:text-accent transition-colors font-normal px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm ${
                         isDropdownActive() ? "text-accent bg-background/20" : ""
                       }`}
                       style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
-                      {item.label}
-                      <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                      <span className="whitespace-nowrap">{item.label}</span>
+                      <ChevronDown size={12} className={`sm:w-4 sm:h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {isDropdownOpen && (
                       <div 
-                        className="absolute bottom-full left-0 mb-2 w-48 bg-background/95 backdrop-blur-md rounded-2xl shadow-lg border border-primary/30 py-2 z-50"
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-36 sm:w-48 bg-background/95 backdrop-blur-md rounded-2xl shadow-lg border border-primary/30 py-2 z-50"
                         onMouseEnter={handleDropdownEnter}
                         onMouseLeave={handleDropdownLeave}
                       >
@@ -200,7 +200,7 @@ const Index = () => {
                           <Link
                             key={dropdownItem.path}
                             to={dropdownItem.path}
-                            className={`block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition-colors ${
+                            className={`block px-3 sm:px-4 py-2 text-xs sm:text-sm hover:bg-primary/10 hover:text-primary transition-colors ${
                               isActive(dropdownItem.path) ? "text-primary bg-primary/10" : "text-primary/80"
                             }`}
                             style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}
@@ -215,12 +215,12 @@ const Index = () => {
                 ) : (
                   <Link
                     to={item.path || '#'}
-                    className={`text-background hover:text-accent transition-colors font-normal px-4 py-2 rounded-full ${
+                    className={`text-background hover:text-accent transition-colors font-normal px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm ${
                       item.path && isActive(item.path) ? "text-accent bg-background/20" : ""
                     }`}
                     style={{ fontFamily: 'Sniglet, cursive', fontWeight: 400 }}
                   >
-                    {item.label}
+                    <span className="whitespace-nowrap">{item.label}</span>
                   </Link>
                 )}
               </div>
