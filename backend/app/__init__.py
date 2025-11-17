@@ -63,6 +63,9 @@ def create_app(config_object=None):
     from .routes.analytics import analytics_bp
     from .routes.mentors import mentors_bp
     from .routes.admin import admin_bp
+    
+    # Import API health routes (direct routes, not blueprints)
+    from .routes import api_health
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(users_bp, url_prefix='/users')
