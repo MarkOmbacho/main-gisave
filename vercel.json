@@ -5,6 +5,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/google5c0ee21bca7e401a.html",
+      "destination": "/google5c0ee21bca7e401a.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
